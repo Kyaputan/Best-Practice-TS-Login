@@ -30,7 +30,7 @@ export const checkRole = (role: Role) => {
             next();
         } else {
             console.log(`❌ Role mismatched: Required ${role.role}, got ${auth?.role}`);
-            return res.status(403).json({ message: "Forbidden: Insufficient role" });
+            res.status(403).json({ message: "Forbidden: Insufficient role" });
         }
     };
 };

@@ -1,5 +1,4 @@
 import express , { Router } from 'express';
-
 import AuthController from '../controllers/auth.controller';
 import { requireLogin } from '../middleware/auth.middleware';
 

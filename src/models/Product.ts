@@ -1,30 +1,40 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
-import { IUser } from "../interfaces/auth.interfaces";
+import { ProductDTO } from "../interfaces/product.interfaces";
 
-export interface IUserDocument extends IUser, Document {}
+export interface IUserDocument extends ProductDTO, Document {}
 
-const userSchema = new Schema<IUserDocument>({
-    username: {
+const ProductSchema = new Schema<IUserDocument>({
+    name: {
         type: String,
         required: true,
-    },
-    email: {
-        type: String,
-        required: true,
+        trim: true,
         unique: true,
     },
-    password: {
-        type: String,
+    price: {
+        type: Number,
         required: true,
+        validate: {
+            validator: (v: number) => v >= 0,
+            message: "Price must be a non-negative number",
+        },
     },
-    role: {
+    quantity: {
+        type: Number,
+        required: true,
+        validate: {
+            validator: (v: number) => v >= 0,
+            message: "Quantity must be a non-negative number",
+        },
+        default: 0,
+    },
+    type: {
         type: String,
-        enum: ["user", "admin"],
-        default: "user",
+        enum: ["electronics", "grocery", "fashion", "home", "misc"],
+        default: "misc",
     },
 }, {
     timestamps: true
 });
 
 
-export const User: Model<IUserDocument> = mongoose.model<IUserDocument>("Users", userSchema);
+export const Product: Model<IUserDocument> = mongoose.model<IUserDocument>("Products", ProductSchema);

@@ -9,7 +9,8 @@ import connectDB from "./database/db";
 
 // ======================= Controllers & Routes ===========================
 import ServerCheck from "./controllers/ServerCheck";
-import authRoutes from "./routes/auth.route";
+import AuthRoutes from "./routes/auth.route";
+import AdminProductRoutes from "./routes/adminproduct.route";
 
 // ======================= Initialize Application =========================
 connectDB();
@@ -35,7 +36,8 @@ app.use(cors({ origin: true, credentials: true }));
 app.get("/", ServerCheck);
 
 // ======================= API Routes =====================================
-app.use("/auth", authRoutes);
+app.use("/auth", AuthRoutes);
+app.use("/adminproduct", AdminProductRoutes);
 
 // ======================= Start Server ===================================
 app.listen(Number(env.PORT)).on("listening", () => {
