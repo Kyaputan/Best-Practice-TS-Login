@@ -34,8 +34,8 @@
 
 ### 📦 Installation
 ```bash
-git clone <your-repo-url>
-cd <project-folder>
+git clone Best-Practice-TS-Login
+cd Best-Practice-TS-Login
 npm install
 ```
 
