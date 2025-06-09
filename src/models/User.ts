@@ -1,31 +1,23 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
-import { IUser } from "../interfaces/auth.interfaces";
+import { IProduct } from "../interfaces/product.interfaces";
+export interface IUserDocument extends IProduct, Document {}
 
-// Extend the mongoose Document interface with our IUser interface
-export interface IUserDocument extends IUser, Document {}
-
-const userSchema = new Schema<IUserDocument>({
-    username: {
+const ProductSchema = new Schema<IUserDocument>({
+    name: {
         type: String,
         required: true,
     },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    password: {
-        type: String,
+    price: {
+        type: Number,
         required: true,
     },
-    role: {
-        type: String,
-        enum: ["user", "admin"],
-        default: "user",
+    quantity: {
+        type: Number,
+        required: true,
     },
 }, {
     timestamps: true
 });
 
 
-export const User: Model<IUserDocument> = mongoose.model<IUserDocument>("Users", userSchema);
+export const Product: Model<IUserDocument> = mongoose.model<IUserDocument>("Products", ProductSchema);
