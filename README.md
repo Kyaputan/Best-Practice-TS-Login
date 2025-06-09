@@ -34,8 +34,8 @@
 
 ### 📦 Installation
 ```bash
-git clone <your-repo-url>
-cd <project-folder>
+git clone Best-Practice-TS-Login
+cd Best-Practice-TS-Login
 npm install
 ```
 
@@ -106,7 +106,6 @@ Authorization: Bearer <token>
 src/
 ├── config/             # Environment settings
 │   ├── env.ts
-│   └── env.interfaces.ts
 ├── controllers/        # Main logic
 │   ├── auth.controller.ts
 │   └── ServerCheck.ts
@@ -114,6 +113,7 @@ src/
 │   └── db.ts
 ├── interfaces/         # Types & Zod schemas
 │   └── auth.interfaces.ts
+│   └── env.interfaces.ts
 ├── middleware/         # Middleware logic
 │   └── auth.middleware.ts
 ├── models/             # Mongoose schemas
