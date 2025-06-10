@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { User } from "../models/User";
-import { UserRegisterDTO, UserLoginDTO, UpdateUserDTO, UserDeleteDTO } from "../interfaces/auth.interfaces";
-import { userRegisterSchema, userLoginSchema, updateUserSchema, userDeleteSchema } from "../interfaces/auth.interfaces";
+import { Cart } from "../models/Cart";
+import { UserRegisterDTO, UserLoginDTO, UpdateUserDTO, UserDeleteDTO } from "../interfaces/auth.interface";
+import { userRegisterSchema, userLoginSchema, updateUserSchema, userDeleteSchema } from "../interfaces/auth.interface";
 import { comparePassword, hashPassword } from "../utils/hash.util";
 import { generateToken } from "../utils/auth.middleware";
-import { JWTUserPayload } from "../interfaces/auth.interfaces";
+import { JWTUserPayload } from "../interfaces/auth.interface";
 import { IUserDocument } from "../models/User";
 import { ZodError } from "zod";
 
@@ -12,8 +13,12 @@ class AuthController {
 
   static async register(req: Request<{}, {}, UserRegisterDTO>, res: Response): Promise<void> {
     try {
-      const registerData = userRegisterSchema.parse(req.body);
-      const { username, email, password } = registerData;
+      const registerData = userRegisterSchema.safeParse(req.body);
+      if (!registerData.success) {
+        res.status(400).json({ success: false, error: "Validation error", details: registerData.error.errors });
+        return;
+      }
+      const { username, email, password } = registerData.data;
       const exist = await User.findOne({ email }).exec();
       if (exist) {
         res.status(400).json({ success: false, error: "Email already in use" });
@@ -21,6 +26,7 @@ class AuthController {
       }
       const hashedPassword: string = await hashPassword(password);
       const user: IUserDocument = await User.create({ username, email, password: hashedPassword });
+      const cart = await Cart.create({ userId: user._id, items: [] });
       res.status(201).json({
         success: true,
         message: "User registered successfully",
@@ -29,6 +35,11 @@ class AuthController {
           username: user.username,
           email: user.email,
           role: user.role,
+        },
+        cart: {
+          _id: cart._id,
+          userId: cart.userId,
+          items: cart.items,
         }
       });
     } catch (err) {
@@ -46,8 +57,12 @@ class AuthController {
 
   static async login(req: Request<{}, {}, UserLoginDTO>, res: Response): Promise<void> {
     try {
-      const loginData = userLoginSchema.parse(req.body);
-      const { email, password } = loginData;
+      const loginData = userLoginSchema.safeParse(req.body);
+      if (!loginData.success) {
+        res.status(400).json({ success: false, error: "Validation error", details: loginData.error.errors });
+        return;
+      }
+      const { email, password } = loginData.data;
       try {
 
         const user: IUserDocument | null = await User.findOne({ email }).exec();
@@ -93,8 +108,12 @@ class AuthController {
 
   static async update(req: Request<{}, {}, UpdateUserDTO>, res: Response): Promise<void> {
     try {
-      const updateData = updateUserSchema.parse(req.body);
-      const { username, email, password, newpassword } = updateData;
+      const updateData = updateUserSchema.safeParse(req.body);
+      if (!updateData.success) {
+        res.status(400).json({ success: false, error: "Validation error", details: updateData.error.errors });
+        return;
+      }
+      const { username, email, password, newpassword } = updateData.data;
       const userId = req.auth?._id;
       if (!username && !email && !newpassword) {
         res.status(400).json({ success: false, error: "No fields to update" });
@@ -136,8 +155,12 @@ class AuthController {
 
   static async delete(req: Request<{}, {}, UserDeleteDTO>, res: Response): Promise<void> {
     try {
-      const deleteData = userDeleteSchema.parse(req.body);
-      const { email, password } = deleteData;
+      const deleteData = userDeleteSchema.safeParse(req.body);
+      if (!deleteData.success) {
+        res.status(400).json({ success: false, error: "Validation error", details: deleteData.error.errors });
+        return;
+      }
+      const { email, password } = deleteData.data;
       const userId = req.auth?._id;
 
       if (!userId) {
@@ -146,6 +169,7 @@ class AuthController {
       }
 
       const user: IUserDocument | null = await User.findOne({ email }).exec();
+      const cart = await Cart.findOne({ userId }).exec();
       if (!user) {
         res.status(401).json({ success: false, error: "Invalid email or password" });
         return;
@@ -166,8 +190,13 @@ class AuthController {
         res.status(404).json({ success: false, error: "User not found" });
         return;
       }
+      const deletedCart = await Cart.findByIdAndDelete(userId).exec();
+      if (!deletedCart) {
+        res.status(404).json({ success: false, error: "Cart not found" });
+        return;
+      }
 
-      res.status(200).json({ success: true, message: "User deleted successfully", user: deletedUser });
+      res.status(200).json({ success: true, message: "User deleted successfully", user: deletedUser , cart: deletedCart });
 
     } catch (err) {
       if (err instanceof ZodError) {

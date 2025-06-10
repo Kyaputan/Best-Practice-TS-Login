@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
-import { ProductDTO } from "../interfaces/product.interfaces";
+import { ProductDTO } from "../interfaces/product.interface";
 
 export interface IUserDocument extends ProductDTO, Document {}
 

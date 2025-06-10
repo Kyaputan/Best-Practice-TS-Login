@@ -3,8 +3,8 @@ import { Product } from "../models/Product";
 import { User } from "../models/User";
 import { comparePassword } from "../utils/hash.util";
 import { ZodError } from "zod";
-import { ProductSchema , updateProductSchema , deleteProductSchema } from "../interfaces/product.interfaces";
-import { ProductDTO , UpdateProductDTO , DeleteProductDTO } from "../interfaces/product.interfaces";
+import { ProductSchema , updateProductSchema , deleteProductSchema } from "../interfaces/product.interface";
+import { ProductDTO , UpdateProductDTO , DeleteProductDTO } from "../interfaces/product.interface";
 
 
 class AdminProductController {
@@ -98,8 +98,8 @@ class AdminProductController {
 };
 
 export default AdminProductController;
-// Request<{ค่าจากparameter}, {ค่าจากquery}, {ค่าจากbody} , {ค่าจากheader}>
 
+// Request<{ค่าจากparameter}, {ค่าจากquery}, {ค่าจากbody} , {ค่าจากheader}>
 // จากparameter /user/123 → { id: "123" }
 // จากquery /user?name=John&age=30 → { name: "John", age: "30" }
 // จากbody 	{ name: "apple" }

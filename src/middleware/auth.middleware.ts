@@ -1,7 +1,7 @@
 import { expressjwt } from "express-jwt";
 import { env } from "../config/env";
 import { Request, Response, NextFunction } from "express";
-import { JWTUserPayload } from "../interfaces/auth.interfaces";
+import { JWTUserPayload } from "../interfaces/auth.interface";
 
 declare global {
     namespace Express {
@@ -14,10 +14,16 @@ declare global {
 export const requireLogin = expressjwt({
     secret: env.JWT_SECRET,
     algorithms: ["HS256"],
-    requestProperty: "auth", 
+    requestProperty: "auth",
 });
 
-
+export const handleJwtError = (err: any, req: Request, res: Response, next: NextFunction): void => {
+    if (err.name === 'UnauthorizedError') {
+        res.status(401).json({ success: false, error: 'Unauthorized: Invalid or missing token' });
+    } else {
+        next(err);
+    }
+};
 interface Role {
     role: "user" | "admin";
 }

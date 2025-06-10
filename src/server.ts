@@ -11,7 +11,7 @@ import connectDB from "./database/db";
 import ServerCheck from "./controllers/ServerCheck";
 import AuthRoutes from "./routes/auth.route";
 import AdminProductRoutes from "./routes/adminproduct.route";
-
+import CartRoutes from "./routes/cart.route";
 // ======================= Initialize Application =========================
 connectDB();
 
@@ -38,6 +38,7 @@ app.get("/", ServerCheck);
 // ======================= API Routes =====================================
 app.use("/auth", AuthRoutes);
 app.use("/adminproduct", AdminProductRoutes);
+app.use("/cart", CartRoutes);
 
 // ======================= Start Server ===================================
 app.listen(Number(env.PORT)).on("listening", () => {
