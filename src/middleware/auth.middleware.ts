@@ -24,6 +24,7 @@ export const handleJwtError = (err: any, req: Request, res: Response, next: Next
         next(err);
     }
 };
+
 interface Role {
     role: "user" | "admin";
 }
